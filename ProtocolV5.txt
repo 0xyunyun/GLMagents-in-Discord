@@ -1,0 +1,670 @@
+📋 **【云云军团协作协议 v5.4 · DEGEN + SHARED BRAIN + ATTACHMENT + OPTIMISTIC CONCURRENCY + COLLAB BOOST】** 🐋
+制定者：WHALE 裁定
+协议编号：YYLC-PROTOCOL-5.4
+生效日期：2026-04-19
+适用范围：所有 Ape 成员、RELAY 脚本、WHALE
+v5.1 新增：共享大脑 (BOARD + FILE) + 死锁检测
+v5.2 新增：**附件原生化** — 项目协作首选附件传输，CODE 文字分段降级为辩论 fallback
+v5.3 新增：**乐观并发** — `base=vN` 版本校验 + GET 自动软 claim + 冲突自动回传最新版
+v5.4 新增：**协作提速** — PUT 自动路由到审计/整合 + [FILE:STATUS] 全局看板 + claim 10/20min 生命周期自动管理
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**设计理念：RELAY 是透明管道，不是监工**
+
+RELAY 只做两件事：转发消息、静默修复格式问题。
+RELAY 永远不会因为格式问题 @你或打断你的工作。
+如果你忘记 @ 对方，RELAY 会悄悄帮你补上并转发。
+你只需要专注于任务本身。
+
+**v5.0 皮肤变更（功能不变）**
+- 「创世主」→ 🐋 **WHALE**（也可称 ser / whale / THE WHALE）
+- 「王国 / 骑士 / 御令」整体退场，换成 degen/NFT 风
+- WHALE 的控制命令从「王座」风换成「终端」风
+- 所有 Bot 统称 **Ape**；角色默认标签：
+  🧙 MERGE WIZARD   (YUNDUODUO — 代码整合)
+  🕵️ AUDITOOR       (SHUSHUYUN — 安全审计)
+  📈 STONKS APE     (YUNYUNBOT — 股票)
+  🎨 PIXEL CHAD     (KIRBY — UI)
+  🦍 QUANT APE      (BENGBENGYUN — 量化)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第一章 环境与基础设施**
+
+第1条 沙盒隔离
+所有 Ape 在独立沙盒中运行，不存在共享文件系统
+代码仅通过 Discord 消息传输，禁止假设其他 Ape 能访问本 Ape 文件系统
+
+第2条 RELAY 定位
+RELAY 为 Python 脚本（非 AI Bot），负责 Ape 间消息的静默转发和格式修复
+RELAY 不执行语义分析，仅做正则匹配
+RELAY UID: 1492732419785097357
+RELAY 的消息不需要回复或 ACK —— 看到就好，继续你的任务
+
+第3条 通讯渠道
+所有 Ape 间通讯通过 Discord 管理员频道进行
+Ape 无法直接 @ 其他 Ape，必须通过 RELAY 转发
+你发的消息中包含 <@目标UID> 时，RELAY 会转发给目标 Ape
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第二章 身份与权限**
+
+第4条 WHALE（原「创世主」YunYun）
+UID: 1393475625695842444
+最高权限，可否决任何决定、暂停 / 恢复转发
+WHALE 命令： [STOP] 暂停 / [START] 恢复 / [GM] 或 [ATALL] 全员广播
+
+第5条 团队架构
+LEAD DEGEN / 整合: YUNDUODUO (🧙 MERGE WIZARD)    UID: 1492136124091732028
+SECURITY APE / 审计: SHUSHUYUN (🕵️ AUDITOOR)      UID: 1492154612164329532
+成员: YUNYUNBOT (📈 STONKS APE — 股票)           UID: 1492070880107298857
+成员: KIRBY (🎨 PIXEL CHAD — UI开发)              UID: 1492424107785191474
+成员: BENGBENGYUN (🦍 QUANT APE — 量化开发)       UID: 1492149607013290146
+
+第6条 权限
+🕵️ AUDITOOR (SHUSHUYUN) 对安全文件有一票否决权
+🧙 MERGE WIZARD (YUNDUODUO) 负责最终代码整合，是 CODE 段固定接收方
+🕵️ AUDITOOR (SHUSHUYUN) 是 CODE 段固定审计方
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第三章 通讯规范（极简版）**
+
+第7条 @ 格式
+推荐格式: <@纯数字UID>
+如果你忘了 @ 或格式不对，RELAY 会静默修复并转发，不会打断你
+但尽量用正确格式，这样消息能更快送达
+
+第8条 CODE 段 @ 规则
+CODE 段建议同时 @ 审计方和整合方: <@1492154612164329532> <@1492136124091732028>
+如果你忘了 @，RELAY 会自动补上并转发到审计方 + 整合方
+发送者是审计方或整合方时不需要 @ 自己
+
+第9条 禁止回复 RELAY 消息
+不要回复（reply / 引用）RELAY 发送的任何系统消息
+如果你看到 RELAY 的宕机恢复通知，直接继续工作，不要回复它
+RELAY 的消息是通知，不是对话 —— 看到就好
+
+第10条 简洁通讯原则
+不要引用回复（reply）对方的消息来通讯，直接 @ 对方发新消息
+引用回复会导致被引用消息中的 @ 触发其他 Ape，造成混乱
+直接 @ 对方 + 写内容，这是最可靠的通讯方式
+
+第10a条 上下文推断
+如果你忘记 @ 目标 Ape，RELAY 会自动推断你最近的对话对象并转发
+但这不是 100% 可靠 —— 如果你想换一个对话对象，必须手动 @
+
+第10b条 不要反复 @ 同一个 Ape
+如果对方没有立即回复，说明对方正在处理任务，请耐心等待
+2 分钟内对同一 Ape 重复 @ 超过 3 次，RELAY 会自动通知你对方在线处理中
+之后的重复 @ 会被静默忽略 1 分钟，让对方有时间处理
+CODE 段不受此限制（代码传输需要连续多段 @ 同一目标）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第四章 三阶段工作管线**
+
+第11条 管线概览
+Stage A（PARALLEL APING / 并行开发）: 各 Ape 独立开发
+Stage B（AUDIT / 安全审计）: 🕵️ AUDITOOR 逐文件审计
+Stage C（MERGE / 代码整合）: 🧙 MERGE WIZARD 整合通过审计的代码
+
+第12条 Stage A — PARALLEL APING
+开发 Ape 独立在沙盒内开发
+WHALE 用 [MANIFEST:] 发布任务清单（drop）
+
+第13条 Stage B — AUDIT
+🕵️ AUDITOOR 为审计方，对每个文件逐段审计
+审计方收到 CODE 段后逐段 ACK，末段给出评级
+审计通过: [STATUS:文件名:CLOSED:评级]
+审计发现问题: [STATUS:文件名:P1/P0:问题描述]
+CLOSED 后由原开发 Ape 将代码发给 🧙 MERGE WIZARD 整合
+
+第14条 Stage C — MERGE
+🧙 MERGE WIZARD 接收审计通过的代码段，整合到项目
+跨 Ape 修改需提前声明 [DECLARE:文件名:修改范围]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第五章 代码传输规则**
+
+第15条 CODE 段格式
+格式: [CODE:段号/总段:文件名:总字符数]
+每段 ≤ 1500 字符（建议值），≤ 1800 字符（硬上限）
+超过 1800 字符时 RELAY 会自动分段，保持代码块完整性
+每段开头 @ 审计方和整合方（忘了也没关系，RELAY 会补）
+
+第16条 ACK 体系
+首段 ACK: [ACK:文件名 开始接收 1/N]
+中间段 ACK: "段号 ✅"
+末段 ACK: [ACK:文件名 全部确认 N/N] + 评级
+如有缺段: [ACK:文件名 缺段 X/N, Y/N]
+
+第17条 评级
+A+ : 零问题
+A  : 有 P2 备注，可直接通过
+B  : 有 P1，需修复后重审
+C  : 有 P0 安全漏洞，立即修复
+
+第18条 传输模式
+同文件审计严格串行
+跨任务可并行 ≤ 2 个文件
+ACK 后再发下一段
+
+第19条 续段与断点
+续段请求: [MISSING:文件名:缺失段范围]
+断点续传: [RESUME:文件名:已确认段数]
+上下文重启后首消息发 RESUME 标记
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第六章 RELAY 行为规范**
+
+第20条 RELAY 核心原则
+RELAY 是透明管道：静默转发，静默修复，绝不打断 Ape 工作
+RELAY 不发送格式违规警告
+RELAY 不发送协议提醒
+RELAY 不 @ Ape 提醒格式问题
+RELAY 唯一会 @ Ape 的场景：宕机恢复重发
+
+第21条 RELAY 静默修复清单
+- Ape 忘记 @ 目标 → 如果是 CODE 段，自动路由到审计方 + 整合方
+- Ape 的 @ 格式不对 → 仍然识别意图并转发
+- 消息过长 → 自动分段，保持代码块完整
+- Ape 发了引用回复 → 忽略引用部分，只转发正文内容
+
+第22条 RELAY 不做的事
+- 不发违规警告（不 @ Ape）
+- 不发协议提醒
+- 不添加惩罚 reaction（⚠️🔻🚫）
+- 不拦截任何消息（除非 WHALE 发 [STOP]）
+- 不对 Ape 消息做任何评判
+
+第22a条 重要消息自动标记（Emoji）
+RELAY 会自动在重要消息上打 emoji，帮助 WHALE 快速定位：
+📦 [DONE:] — 任务完成
+✅ [STATUS:文件名:CLOSED] — 审计通过
+🚨 [STATUS:文件名:P0] — P0 安全漏洞
+⚠️ [STATUS:文件名:P1] — P1 问题需修复
+📋 [MANIFEST:] — 任务清单
+💾 [CODE:最后一段] — 代码文件最后一段传输完成
+🆘 [FAIL:] — 三振出局
+Ape 无需做任何事情，RELAY 自动检测并标记
+
+第22b条 WHALE @ 过滤
+不要随便 @ WHALE。只有以下情况才应该 @ WHALE：
+- 任务完成交付最终产品 [DONE:]
+- P0 安全漏洞
+- 三振出局 [FAIL:]
+- 需要审批或决定的事项
+- 紧急暂停 [PAUSE:]
+- 直呼 "ser" / "WHALE" + "pls/plz/看看/帮" 风格的 degen 请求
+如果你 @ 了 WHALE 但消息内容不属于以上情况，RELAY 会静默去掉 WHALE 的 @
+这样 WHALE 只会被真正重要的事情通知到
+
+第23条 z.ai 服务端错误处理
+z.ai 的 capacity 错误消息静默忽略，不转发、不更新活跃时间
+检测到 Ape 宕机后立即重发最后一条消息
+
+第24条 WHALE 转发开关
+[STOP]      — 暂停所有转发
+[START]     — 恢复转发
+[GM] / [ATALL] 内容 — 全 Ape 广播（chill 版）
+[SIGNAL] 内容       — 全 Ape 广播（full-chain fanfare 版）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第七章 崩溃恢复**
+
+第25条 崩溃检测
+RELAY 通过检测 z.ai capacity 错误消息识别 Ape 宕机
+检测到宕机后立即重发存储的最后一条消息
+Ape 恢复后自动清除离线状态
+
+第26条 恢复后行为
+Ape 恢复后直接继续工作，发 [RESUME] 标记即可
+不需要回复 RELAY 的恢复通知
+离线消息暂存 6 小时，每 Ape 最多 20 条
+
+第27条 三振出局（人工触发）
+等待 3 分钟无回复 → 重新 @ 目标，等 3 分钟 → 再次 → [FAIL:ape名] @ WHALE
+由 Ape 人工判断触发，RELAY 不自动执行
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第八章 持续迭代模式**
+
+第28条 持续运行原则
+所有 Ape 应持续迭代任务直到完成
+任务完成标准：代码无需进一步修改
+完成后由 🧙 MERGE WIZARD 整合最终产品并 @ WHALE 交付
+
+第29条 禁止空转
+不要发无意义的确认消息（如 "好的我知道了"、"收到"）
+不要回复 RELAY 的系统消息
+不要等待别人回复你的非关键消息
+专注于产出代码和完成任务
+
+第30条 死锁预防
+如果你等了 3 分钟没收到预期的回复，主动重发或继续下一步
+不要所有人都在等 —— 总有人应该在写代码
+如果不确定该做什么，问 WHALE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第九章 WHALE 终端命令（degen 控制台）**
+
+第31条 SCOUT（透视类）
+[RADAR] / [TERMINAL]    — DEGEN RADAR 全景（Ape 活跃度 + 任务 + 统计）
+[GM] / [WHO]            — 谁在线速览
+[BAGS]                  — 任务板完整视图（文件 + owner + 状态）
+[MEMPOOL]               — 离线队列（pending 消息）
+[SNIPE:ape]             — 查看某 Ape 最近 10 条
+[TX:ape:N]              — 查看某 Ape 最近 N 条
+
+第32条 BROADCAST（广播类）
+[GM] 内容 / [ATALL] 内容   — chill 版全员广播
+[SIGNAL] 内容              — full-chain fanfare 版广播
+[STOP] / [START]           — 暂停 / 恢复转发
+
+第33条 ROLE / ACCESS（打标 + 权限）
+[TAG:ape:role]         — 给某 Ape 打 role tag（显示在消息前）
+[UNTAG:ape]            — 清除 tag（恢复默认）
+[RUG:ape]              — 切断消息（不转发给此 Ape）
+[RELIST:ape]           — 恢复 Ape 可接收消息
+
+第34条 MAINTENANCE
+[WIPE]                 — new epoch，清零 radar 统计
+[HELP]                 — 命令速查
+
+第35条 Legacy 别名（仍可用，等价于新名）
+[THRONE]=[RADAR]  [DASHBOARD]=[RADAR]  [WHOIS]=[GM]
+[TASKS]=[BAGS]  [QUEUE]=[MEMPOOL]
+[SPY:]=[SNIPE:]  [LOG:]=[TX:]  [DECREE]=[SIGNAL]
+[KNIGHT:]=[TAG:]  [UNKNIGHT:]=[UNTAG:]
+[EXILE:]=[RUG:]  [PARDON:]=[RELIST:]
+[RESET_STATS]=[WIPE]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第十章 共享大脑 — SHARED BRAIN（v5.1 新增）**
+
+动机：沙盒隔离让每个 Ape 都是一座孤岛，文件系统和库都无法共享。
+RELAY 已经是所有消息必经的节点，因此把它升级为**共享状态层**：
+一块所有人都可读写的**黑板（BLACKBOARD）**，加上一个自动累积的
+**文件版本库（FILE STORE）**。这两块状态在 RELAY 进程里，
+所有 Ape 通过 `[BOARD:*]` / `[FILE:*]` 命令访问。
+RELAY 捕获这些命令后**直接响应**，不会把它们当成普通聊天转发。
+
+第36条 BLACKBOARD — 共享键值黑板
+  命令：
+  [BOARD:PUT:key:value]    — 写入或更新一个键（version 自增）
+  [BOARD:GET:key]          — 读取一个键（附带作者 + 版本 + 时间）
+  [BOARD:DEL:key]          — 删除一个键
+  [BOARD:LIST]             — 列出所有键（紧凑视图）
+  限制：
+    • 键长度 ≤ 64 字符，value ≤ 1500 字符
+    • 总键数 ≤ 200（超过时按 ts 淘汰最旧）
+  用途：公告栏、任务 claim、当前 sprint 状态、
+    公共常量（如 API 约定、开发分支名、数据 schema 版本）。
+
+第37条 FILE STORE — 自动文件版本库
+  命令：
+  [FILE:LIST]              — 列出所有文件（版本数 + 最新作者 + 大小）
+  [FILE:VERSIONS:filename] — 列出某文件的所有版本
+  [FILE:GET:filename]      — 获取最新版本内容（可能分段回复）
+  [FILE:GET:filename:v3]   — 获取指定版本（RELAY 以 Discord 附件回复，v5.2 起）
+
+  如何写入（v5.2 起，两条通道）：
+
+  A. **推荐：附件直传（v5.2 新增，项目协作默认模式）**
+     发一条消息，内容里写 `[FILE-PUT:filename]`，并**带上 Discord 附件**
+     （文件内容即附件本身，不用粘贴到消息体）。
+     RELAY 看到这两个一起出现 → 下载附件 → 写入 FILE STORE →
+     回复 `[sender] 📁 FILE[name] snapshot vN (... bytes, bin/txt)`。
+     支持：文本 + 二进制（截图/zip/db/字体，任何 ≤ 8MB 的文件）。
+     UTF-8 可解码的附件自动按文本存，否则按二进制存。
+
+  B. Legacy：CODE 段自动重组（v5.1 行为保留）
+     某 Ape 用 [CODE:1/N:filename:size]…[CODE:N/N:...] 顺序发完所有段，
+     RELAY 自动在所有段到齐后**拼接成完整文件写入 FILE STORE**。
+     不完整的 CODE 累积 30 分钟后过期丢弃。
+     **v5.2 起这条路径仅用于 Ape 之间实时讨论/辩论时穿插代码片段，
+     不再是项目协作的推荐方式。** 一上 KB 级就改用附件模式。
+
+  限制：
+    • 每文件保留最近 5 个版本，旧版本自动淘汰
+    • 总文件数 ≤ 50（超出按 ts 淘汰）
+    • **附件模式**：单文件单版本 ≤ 8 MB（Discord 附件上限）
+    • **CODE 段模式**：单文本版本 > 60000 字符则截断保存（附 `...(truncated)` 标记）
+    • 二进制内容在持久化时自动 base64 编码（对 Ape 透明）
+  用途：任何 Ape 可以随时把最新版代码拉回去（比如需要看别人改了啥、
+    对比历史版本、续写别人没写完的模块、审计、传截图给 WHALE 看）。
+
+第37a条 附件模式示例（v5.2）
+  # Ape 发布：消息带 `relay2.py` 附件
+  内容: [FILE-PUT:relay2.py] v3 重构后的 relay，已过本地冒烟测试
+  → RELAY 回复: <@ape> 📁 FILE[relay2.py] snapshot v4 (91200 bytes, txt)
+
+  # 别的 Ape 拉取：
+  内容: [FILE:GET:relay2.py]
+  → RELAY 回复: <@ape> 📁 FILE[relay2.py] v4 by 🧙 MERGE WIZARD 5m ago (91200 bytes, txt)
+    【附件: relay2.py】
+
+第37b条 何时选附件 vs 何时选 @ 辩论
+  ✅ 附件模式（[FILE-PUT]/[FILE:GET] + Discord 附件）适合：
+     • 发布完整文件让别人审计/续写/整合
+     • 文件 > 1KB 或含 triple backtick 等容易破格式的内容
+     • 图片、zip、sqlite 等二进制资产
+     • 跨 Ape 的代码移交（HANDOFF）
+  💬 CODE 段 / @ 文字消息 适合：
+     • Ape 之间实时辩论、讨论某段代码
+     • 片段级小块（几行到几十行）
+     • "这里要不要改成 async" 这种需要对方立刻看到上下文的场景
+
+第38条 RELAY 对 BOARD/FILE 命令的处理
+  • `[BOARD:*]` 命令行必须**独占一整条消息**（不要和普通聊天混合）
+  • `[FILE:*]` 同上（GET/LIST/VERSIONS）
+  • `[FILE-PUT:filename]` **允许混在消息里**（可以带人类语言说明），
+     只要同一条消息里有附件即可触发
+  • 以上命令的响应，RELAY 直接 `@` 命令发起人回复，**不会转发给其他 Ape**
+  • WHALE 也可以直接使用这些命令（同格式，含 FILE-PUT 带附件）
+  • 如果命令参数不合法或附件缺失，RELAY 回复错误提示但仍不转发给他人
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第十一章 死锁检测 — DEADLOCK DETECTION（v5.1 新增）**
+
+第39条 何为死锁
+  RELAY 追踪每个 [CLAIM:filename] 和 [HANDOFF:receiver:filename]
+  对应的"任务负责人"。如果某任务超过 **15 分钟** 没有任何
+  来自当前负责人的 CODE/STATUS/DONE/HANDOFF 活动，RELAY 会
+  判定为**潜在死锁**。
+
+第40条 RELAY 的响应
+  • RELAY 只会**@ WHALE** 进行提示，绝不 @ 当前 Ape 打断工作
+    （Silent Pipe 原则不破）
+  • 同一文件的提示冷却时间 10 分钟，避免刷屏
+  • WHALE 收到后可自行决定：继续等待 / [SIGNAL] 询问 / 重新分配
+  • WHALE 也可主动 `[DEADLOCKS]` 查看所有当前停滞任务
+
+第41条 WHALE 查看命令
+  [DEADLOCKS]           — 列出所有停滞任务（文件 + 负责人 + 空闲时长）
+  [BOARDVIEW] / [BOARD] — 查看黑板全貌
+  [FILES]               — 查看文件版本库全貌
+  [VERSIONS:filename]   — 查看某文件所有版本
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第十二章 乐观并发 — OPTIMISTIC CONCURRENCY（v5.3 新增）**
+
+问题背景：
+  V5.2 前两个 Ape 同时对一个文件操作会发生 lost update：
+    10:00 WIZARD [FILE:GET:x.py]      → 拿到 v3
+    10:01 AUDITOOR [FILE:GET:x.py]    → 也拿到 v3
+    10:05 WIZARD [FILE-PUT:x.py]      → 存成 v4
+    10:07 AUDITOOR [FILE-PUT:x.py]    → 存成 v5（覆盖了 WIZARD 的 v4 改动）
+  v5.3 引入 base=vN 版本校验 + GET 自动软 claim 解决此问题。
+
+第42条 FILE:GET 自动软 claim（必读）
+  • Ape 发 [FILE:GET:fname] 拿最新版时，RELAY 自动把 active_tasks[fname]
+    标记为本 Ape 所有（status=GET-CLAIMED）。这是一个**软锁**，不阻断他人
+    的 GET/PUT，只是告诉后来者"有人正在改这个文件"。
+  • 获取历史版本 [FILE:GET:fname:v3] 不触发 claim（视为只读审计）。
+  • claim 活跃期：10 分钟（CLAIM_FRESH_MINUTES）。超期后自动失效。
+
+第43条 FILE:GET 返回的 base 标签
+  • RELAY 回传附件时，消息 header 末尾会带 `base=v4` 标签（v4 是当前最新版本号）。
+  • Ape 收到后**必须记住这个版本号**，PUT 时用它做 base 校验。
+
+第44条 并发预警
+  • 当 Ape 发 [FILE:GET:fname]，如果 active_tasks[fname] 有**别人**
+    10 分钟内的活跃 claim，RELAY 会在 header 加 ⚠️ 预警：
+      "⚠️ CONCURRENT — `fname` 正被 AUDITOOR 处理 (CLAIMED, 3min ago)"
+  • 预警不阻止你取文件，但强烈建议：
+    - 如果只是审计 → OK，继续（不会覆盖）
+    - 如果打算改 → 先 @对方协商，或等他先 [FILE-PUT] 后再取最新版
+
+第45条 FILE-PUT 的 base=vN 语法（**推荐格式**）
+  [FILE-PUT:fname:base=vN]  + Discord 附件
+  其中 N 是你 GET 时看到的 base 版本号。
+
+  RELAY 校验逻辑：
+    A. base=N 等于当前最新版 → 通过，存为 v(N+1)，自动 release claim
+    B. base=N 小于当前最新版 → **拒绝**，RELAY 把最新版作为附件回传
+       消息内容：
+         "⚠️ CONFLICT FILE-PUT[fname] base=v3 已过期 —
+          当前是 v5 by AUDITOOR 2min ago
+          附件回传最新版 — 请合并你的改动后重发 [FILE-PUT:fname:base=v5]"
+       你必须基于回传的新版本手工合并你的改动，再用新 base 重发。
+    C. base 未提供（legacy [FILE-PUT:fname]） → 仍允许写入（last-write-wins），
+       但 ACK 会加"⚠️ 未提供 base=vN，覆盖 vM"警告。**不推荐**。
+       只在**首次 PUT**（file_store 里还没有这个文件）或**单 owner 场景**使用。
+
+第46条 冲突恢复流程（标准动作）
+  场景：你 PUT 时遇到 B 路径冲突回传。
+  1) RELAY 回给你一个附件（最新版），header 有 CONFLICT 字样
+  2) 你读取最新版的代码
+  3) 把你自己的改动**合并**到最新版上（因为你是 LLM，合并对你来说不难）
+  4) 用新的 base 重发：[FILE-PUT:fname:base=v<latest>]
+  5) 这次应该成功（除非又被别人抢先）
+  禁止的行为：看到 CONFLICT 就乱 @ WHALE 求助 — 这是正常协作流程，
+  你自己合并即可，WHALE 不需要介入。
+
+第47条 PUT 成功后的 claim release
+  • RELAY 存储成功后，自动把 active_tasks[fname] 标成 PUT-DONE。
+  • 下一个 GET 会看到"PUT-DONE"状态（不是 CLAIMED），不触发并发预警。
+  • 如果你自己 GET 后发现不改了（纯审计），可以显式 [BOARD:DEL:claim-fname]
+    清除（暂未实现，当前靠 10min 超时）。
+
+第48条 与死锁检测（第十一章）的关系
+  • 死锁检测看 active_tasks 里 status in {CLAIMED, OPEN, HANDOFF, None}
+    且 idle > 15min 的条目。
+  • GET-CLAIMED 不在死锁判定的 active statuses 里（v5.3 设计选择），
+    不会因为 "GET 后忘 PUT" 被死锁算法误报。
+  • 真正的死锁需要 Ape 主动 [CLAIM:fname] 声明自己负责这个任务。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**第十三章 协作提速 — COLLAB BOOST（v5.4 新增）**
+
+第49条 FILE-PUT 自动路由（你不用手动 @ 审计/整合）
+  • 任何 Ape 成功 [FILE-PUT:name] 后，RELAY 在同频道自动补一条消息：
+    @ AUDITOOR + @ MERGE WIZARD，带 v{N} 版本号 + `[FILE:GET:name]` 一键取件提示。
+  • 如果你就是 AUDITOOR/MERGE WIZARD 自己，RELAY 只 @ 另一方，不 @ 你自己。
+  • 用途：跟 CODE 段自动路由对齐 — 审计方/整合方立即知道有新版本要处理。
+  • 你的义务：发布时不要自己再 @ 一次 AUDITOOR/MERGE WIZARD，RELAY 已代劳。
+    **你的注意力放在 [HANDOFF:] 里指定的下游 ape**（如果要交棒给 STONKS 或 PIXEL 等）。
+
+第50条 [FILE:STATUS] — 全局协作看板
+  • 任何 Ape + WHALE 都可用。一条命令看到：
+    - 🔒 活跃 claim（GET-CLAIMED 状态，<20min）：哪个 ape 在改哪个文件，几分钟前
+    - ✅ 刚 PUT 完（PUT-DONE 状态）：最近 3 个已交付
+    - 📝 最近 5 次 PUT：跨所有文件的版本时间线
+  • 什么时候用：接新任务前先 [FILE:STATUS] 一眼，避免抢别人正在改的文件。
+  • 跟 [FILES] 区别：[FILES] 只列文件本身，[FILE:STATUS] 加并发状态维度。
+
+第51条 Claim 生命周期（自动管理）
+  • t=0: 你 [FILE:GET:name] → RELAY 标记 active_tasks["file:name"] = {you, GET-CLAIMED}
+  • t=10min: 如果还没 PUT → RELAY 在原频道温和 @ 你一次：
+    "`name` 你 Xmin 前 GET 了还没回传 — 改完发 [FILE-PUT:name:base=vN]；
+     不改就不用管，Ymin 后自动释放。"
+    **这不是催促，只是提醒**。你可以继续忙，10min 后自动释放，不再打扰。
+  • t=20min: 还没 PUT → RELAY 静默释放 claim（不 @ 任何人，不做任何记录）。
+    之后其他 ape GET 该文件不会看到你的 claim 预警。
+  • 如果你 PUT 成功，claim 立即转为 PUT-DONE，后台不再提醒。
+  • 重要：RELAY 绝不 @ WHALE 也绝不广播 claim 过期事件。claim 是 ape 的私事。
+
+第52条 active_tasks 命名空间（给排查问题的 WHALE 看）
+  • v5.4 起文件 claim 存 `active_tasks["file:fname"]`（带 file: 前缀）。
+  • 任务 claim（`[CLAIM:task-name]`）继续存 `active_tasks["task-name"]`（不加前缀）。
+  • 这样文件并发 claim 跟任务 claim 在同一个名字空间也不会互相覆盖。
+  • [DEADLOCKS] / [BAGS] 只显示非 file: 前缀条目；[FILE:STATUS] 只显示 file: 前缀条目。
+
+第53条 历史版本 GET（审计用）
+  • [FILE:GET:name:vN] 带版本号 = 只读审计，**不触发自动 claim**。
+  • 返回 header 格式：`historical=vN (latest=vM, audit-only, no claim)`，
+    不带 `base=vN` 标签 — 因为历史版本不能作为 PUT 的基准。
+  • 用途：code review、diff 对比、回滚参考。你可以安心看历史，不抢占 claim。
+
+第54条 与前几版的关系
+  • v5.4 对 V4 / V5.0 / V5.1 / V5.2 / V5.3 的 Ape 全部向后兼容。
+  • 旧 Ape 不需要改任何代码就能享受自动路由（只是它们自己发的 PUT 也会被 RELAY 路由）。
+  • 旧 Ape 不知道 [FILE:STATUS]、不知道 claim 过期提醒，但 RELAY 照样会发 — 可以忽略。
+  • v5.3 的冲突恢复流程（第46条）不变。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**结构化前缀速查：**
+[CODE:段/总:文件名:总字符数] — 代码传输段
+[ACK:文件名:信息] — 接收确认
+[STATUS:文件名:OPEN/CLOSED/SKIPPED:评级] — 文件审计状态
+[MANIFEST:项目名:文件数] — 任务清单
+[MANIFEST:OK:项目名] — 任务清单确认
+[MISSING:文件名:缺失段范围] — 缺段请求
+[RESUME:文件名:已确认段数] — 断点续传
+[DECLARE:文件名:修改范围] — 修改声明
+[CLAIM:文件名] — 认领某文件
+[HANDOFF:接收方:文件名] — 移交所有权
+[BLOCKED:原因] — 声明阻塞原因
+[FAIL:ape名] — 三振出局
+[PAUSE:原因] — 暂停传输
+[RECOVERED:ape名:状态] — 崩溃恢复声明
+[SEEN] — 选择性已读
+[PROGRESS:已完成:正在处理:剩余数] — 进度追踪
+[DONE:任务名] — 任务完成
+
+**SHARED BRAIN 命令（任何 Ape + WHALE 都可用）：**
+[BOARD:PUT:key:value]   — 写入黑板（v5.1）
+[BOARD:GET:key]         — 读取某键
+[BOARD:DEL:key]         — 删除某键
+[BOARD:LIST]            — 列出所有键
+[FILE:LIST]             — 列出所有文件
+[FILE:STATUS]           — **v5.4**：活跃 claim + 最近 PUT 全局看板
+[FILE:VERSIONS:fname]   — 列出某文件所有版本
+[FILE:GET:fname]        — 拿最新版本（v5.2 起返回 Discord 附件，v5.3 起自动软 claim）
+[FILE:GET:fname:v2]     — 拿指定版本（v5.4 起明确 audit-only 不 claim）
+[FILE-PUT:fname]        — 发布文件（v5.2，消息必须同时带 Discord 附件）
+[FILE-PUT:fname:base=vN] — **推荐**：基于 vN 发布（v5.3 乐观并发校验，v5.4 PUT 后自动路由到审计/整合）
+
+**WHALE 专属命令：**
+[RADAR] / [TERMINAL] / [GM] / [WHO] / [BAGS] / [MEMPOOL]
+[SNIPE:ape] / [TX:ape:N]
+[SIGNAL] / [ATALL] / [STOP] / [START]
+[TAG:ape:role] / [UNTAG:ape] / [RUG:ape] / [RELIST:ape]
+[BOARDVIEW] / [BOARD] / [FILES] / [VERSIONS:fname] / [DEADLOCKS]
+[WIPE] / [HELP]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**UID 速查表：**
+WHALE (YunYun): 1393475625695842444
+🧙 MERGE WIZARD (YUNDUODUO — 代码整合 / LEAD DEGEN): 1492136124091732028
+🕵️ AUDITOOR (SHUSHUYUN — 网络安全 / 审计): 1492154612164329532
+📈 STONKS APE (YUNYUNBOT — 股票): 1492070880107298857
+🎨 PIXEL CHAD (KIRBY — UI开发): 1492424107785191474
+🦍 QUANT APE (BENGBENGYUN — 量化开发): 1492149607013290146
+RELAY (脚本 / 非 Bot): 1492732419785097357
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v4.0 → v5.0 重大变更摘要：
+- **皮肤整体重做 "degen edition"**：
+  - 创世主 → 🐋 WHALE（可被称 ser / whale / THE WHALE）
+  - 王国 / 骑士 / 册封 / 流放 / 赦免 / 御令 全部退场
+  - Bot 统称 Ape；五位 Ape 有默认 role tag（MERGE WIZARD / AUDITOOR / STONKS / PIXEL / QUANT APE）
+- **命令重命名（所有 WHALE 专属命令）**：
+  - [THRONE]/[DASHBOARD] → [RADAR]/[TERMINAL]
+  - [WHOIS] → [GM]/[WHO]
+  - [TASKS] → [BAGS]
+  - [QUEUE] → [MEMPOOL]
+  - [SPY:] → [SNIPE:]
+  - [LOG:] → [TX:]
+  - [DECREE] → [SIGNAL]
+  - [KNIGHT:] → [TAG:]
+  - [UNKNIGHT:] → [UNTAG:]
+  - [EXILE:] → [RUG:]
+  - [PARDON:] → [RELIST:]
+  - [RESET_STATS] → [WIPE]
+  - 所有旧命令作为 legacy 别名保留，完全向后兼容
+- **新增 WHALE @ 过滤扩展**：识别 "ser, pls" / "WHALE, pls" / "rekt" / "rug" 等 degen 风格请求
+- **功能零变化**：协议/管线/传输/恢复逻辑全部与 v4.0 一致，只重做名称与文案
+- **向后兼容**：所有 Bot 的 V4 代码无需修改即可在 V5 relay 上运行
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v5.0 → v5.1 重大变更摘要（SHARED BRAIN）：
+- **新增共享黑板**（BLACKBOARD）：
+  - 所有 Ape + WHALE 通过 `[BOARD:PUT/GET/DEL/LIST:key:value]` 读写
+  - 最大 200 键，每值 ≤ 1500 字符，自动版本号
+  - 沙盒隔离下的"公告栏/任务 claim/全局常量"
+- **新增文件版本库**（FILE STORE）：
+  - `[FILE:LIST/VERSIONS/GET:filename[:vN]]` 读取
+  - **CODE 段完整到齐后自动 snapshot 成文件**（不需要显式 PUT）
+  - 每文件保留最近 5 个版本，单版本 ≤ 60000 字符
+  - 让任何 Ape 都能拉到别人的最新代码做续写/审计/对比
+- **新增死锁检测**：
+  - 被 [CLAIM] 或 [HANDOFF] 的文件若 15 分钟无活动，RELAY 会 @ WHALE
+  - **从不打断 Ape 工作**（Silent Pipe 原则），只对 WHALE 可见
+  - 同文件冷却 10 分钟
+- **WHALE 新命令**：[BOARDVIEW]/[BOARD] / [FILES] / [VERSIONS:fname] / [DEADLOCKS]
+- **持久化**：BOARD/FILE/DEADLOCK 冷却都写入 relay_state.json，重启不丢
+- **协议层面兼容性**：V4/V5.0 的 Bot 无需修改即可运行（新能力是"加法"，不改旧行为）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v5.1 → v5.2 重大变更摘要（ATTACHMENT NATIVE）：
+- **项目协作首选附件传输**，彻底摆脱 CODE 文字分段的繁琐和 triple-backtick 转义地狱：
+  - Bot 发布：消息带 Discord 附件 + 内容写 `[FILE-PUT:filename]` → RELAY 自动入库
+  - Bot 拉取：`[FILE:GET:filename]` → RELAY 以 Discord 附件回复（不再是分段代码块）
+  - 上限：8 MB/附件，5 版本/文件，50 文件总上限（跟 Discord 免费号对齐）
+- **二进制原生支持**：UTF-8 解码失败自动按二进制存；
+  持久化时 base64 编码进 relay_state.json（对 Ape 完全透明）
+- **截图/zip/sqlite/字体 都能传** — 不再限于文本文件
+- **CODE 段文字传输降级为"辩论 fallback"** — 仍可用于 Ape 之间讨论代码片段，
+  但项目实际协作建议全部走附件。相关 [CLAIM]/[HANDOFF]/[ACK]/[STATUS] 等
+  协议标签**仍然适用**，只是承载载体从"文字分段"变成了"附件 + 元数据消息"。
+- **向后兼容**：V4/V5.0/V5.1 的 Bot 无需修改即可运行；它们只是用不到附件模式。
+  等 Bot 升级到能发附件后，切换是逐个 Ape 增量推进的，不需要一次性切换。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v5.2 → v5.3 重大变更摘要（OPTIMISTIC CONCURRENCY）：
+- **乐观并发 + 自动 claim** 解决两个 Ape 同时改一个文件的 lost-update 问题：
+  - GET 最新版时，RELAY 自动把 active_tasks[fname] 标成 GET-CLAIMED
+  - GET 的 header 末尾带 `base=vN` 告诉 Ape 当前版本号
+  - GET 时若发现别人 10min 内也 claim 过 → header 加 ⚠️ CONCURRENT 预警
+- **[FILE-PUT:fname:base=vN] 成为推荐格式**（legacy [FILE-PUT:fname] 仍可用但有警告）：
+  - base=N 等于最新版 → 通过，存为 v(N+1)，release claim
+  - base=N 小于最新版 → 拒绝 + 把最新版作为附件回传，让 sender 合并重发
+  - 无 base → last-write-wins（仅用于首次 PUT 或单 owner 场景）
+- **冲突恢复是 Ape 自己的事**：收到 CONFLICT 回传后，合并最新版与自己改动再重发
+  新 base。**不需要 @ WHALE 求助**，这是正常协作流程。
+- **不影响死锁检测**：GET-CLAIMED 不在死锁的 active statuses 里，不会误报；
+  真正死锁仍然需要 Ape 主动 [CLAIM:fname] 声明。
+- **UX 改进**：[FILE-PUT:x] marker 但消息没附件 → RELAY 友好 nudge
+  "检测到 marker 但没附件，请重发并带附件"（不阻断同消息里的 @-mention 转发）。
+- **向后兼容**：V5.2 的 Bot 不改造仍能跑，只是享受不到冲突保护（会看到 legacy warning）。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v5.3 → v5.4 重大变更摘要（COLLAB BOOST）：
+- **FILE-PUT 自动路由到审计/整合**（第49条）：
+  - 成功 PUT 后 RELAY 自动在同频道 @ AUDITOOR + MERGE WIZARD（跳过 sender 自己）
+  - 跟 V5.1 就在用的 CODE 段自动路由对齐，节省一次手动 @
+- **[FILE:STATUS] 全局看板**（第50条）：
+  - 一条命令看 活跃 claim + 刚 PUT 完 + 最近 5 次 PUT
+  - 接新任务前扫一眼避免抢别人的活
+- **Claim 生命周期自动管理**（第51条）：
+  - GET → 10min 温和提醒一次（原频道 @ claimant，不 @ WHALE）→ 20min 静默释放
+  - 防止僵尸 claim 长期占用视觉空间；不打扰工作流
+- **active_tasks 命名空间前缀**（第52条）：
+  - 文件 claim 用 `file:` 前缀 key，彻底跟任务 `[CLAIM]` 隔离
+  - [DEADLOCKS] / [BAGS] 只显示任务；[FILE:STATUS] 只显示文件
+- **历史 GET 明确 audit-only**（第53条）：
+  - [FILE:GET:name:vN] header 不再带 base= 标签，改为 historical=vN (latest=vM, audit-only)
+  - 避免 ape 用历史版本当 PUT 基准误触发冲突
+- **后台 watchdog**：relay 启动时额外起一个 asyncio task 周期扫 claim 生命周期
+- **向后兼容**：V5.3 及更早 Bot 不用改代码；自动路由 + claim 提醒对它们透明工作

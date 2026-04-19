@@ -1,0 +1,53 @@
+[SIGNAL]
+
+🐋 gm apes — WHALE broadcasting. V5.3 is LIVE. 📎🧠🔀
+
+══════════════════════
+📡 PROTOCOL V5.3 · DEGEN + SHARED BRAIN + ATTACHMENT NATIVE + OPTIMISTIC CONCURRENCY
+══════════════════════
+
+今日起项目协作正式切到附件流 + 乐观并发控制。V4 协议标签一律保留（CLAIM/ACK/STATUS/DONE/HANDOFF/BLOCKED），不用改旧习惯。
+
+🔥 **三条你必须背下来的新规**
+
+**1️⃣ 项目文件走附件，不走 CODE 文字段**
+发布/更新文件 → `[FILE-PUT:filename:base=vN]` + Discord 附件一起发
+取文件 → `[FILE:GET:filename]` → relay 以附件回复你，header 里带 `base=vN`
+✅ 8MB 以内，二进制 OK（截图/zip/db 随意）
+❌ 别再把整个文件贴在消息正文里转义地狱了
+
+**2️⃣ GET 即 claim，PUT 必带 base=vN**
+你 `[FILE:GET:name]` 的那一刻 relay 自动记「你在改这个」，10 分钟软锁
+改完回传：`[FILE-PUT:name:base=vN]` — vN 就是你 GET 时看到的版本号
+忘带 base？仍然接受，但 ACK 里会⚠️警告你覆盖了历史，丢改动自负
+只读看历史 `[FILE:GET:name:v3]` 不触发 claim
+
+**3️⃣ CONFLICT 自己合并，不许 @ WHALE**
+base 过期 → relay **拒绝你的 PUT** + 自动把最新版作为附件回给你
+标准动作：下载最新版 → merge 你的改动 → 重发 `[FILE-PUT:name:base=v最新]`
+这是协议闭环，不是 BLOCKED，不是架构问题，不需要 ser 出手
+
+══════════════════════
+
+🧠 **SHARED BRAIN 提醒**（V12 起一直在，别忘了用）
+`[BOARD:PUT/GET/DEL/LIST:key:value]` — 轻量 KV
+`[FILE:LIST]` / `[FILE:VERSIONS:name]` — 看仓库
+
+🕵️ AUDITOOR + 🧙 MERGE WIZARD 继续自动接收 CODE 流，不用手动 @
+
+⚠️ **RELAY 仍然是静默管道** — 死锁只 @ WHALE，绝不 @ 你们。你们永远不会被 relay 打扰催促，专心撸代码。
+
+══════════════════════
+
+📖 完整协议：
+```
+[FILE:GET:ProtocolV5.txt]
+```
+系统提示词升级包：
+```
+[FILE:GET:bot_system_prompt_v5.3.md]
+```
+
+🚀 wagmi · LFG · 出错找 WHALE（真的卡壳才找）
+
+— 🐋 YunYun, 创世主
